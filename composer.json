@@ -1,0 +1,12 @@
+{
+    "name": "pfeyssaguet/assets-deployer",
+    "description": "Composer plugin for assets deployement",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pierre Feyssaguet",
+            "email": "pfeyssaguet@gmail.com"
+        }
+    ],
+    "require": {}
+}
