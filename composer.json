@@ -2,11 +2,22 @@
     "name": "pfeyssaguet/assets-deployer",
     "description": "Composer plugin for assets deployement",
     "license": "MIT",
+    "type": "composer-plugin",
     "authors": [
         {
             "name": "Pierre Feyssaguet",
             "email": "pfeyssaguet@gmail.com"
         }
     ],
-    "require": {}
+    "autoload": {
+        "psr-4": {
+            "Pfeyssaguet\\AssetsDeployer\\": "src/"
+        }
+    },
+    "require": {
+        "composer-plugin-api": "*"
+    },
+    "extra": {
+        "class": "Pfeyssaguet\\AssetsDeployer\\AssetsDeployerPlugin"
+    }
 }
