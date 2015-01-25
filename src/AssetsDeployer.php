@@ -10,6 +10,8 @@ use Composer\Repository\InstalledRepositoryInterface;
 
 class AssetsDeployer extends LibraryInstaller
 {
+    protected $targetDir;
+
     public function __construct(IOInterface $io, Composer $composer)
     {
         parent::__construct($io, $composer);
@@ -18,11 +20,12 @@ class AssetsDeployer extends LibraryInstaller
         $rootPackageExtra = $rootPackage->getExtra();
 
         if (isset($rootPackageExtra['assets-deployer'])) {
-            $assetsDir = $rootPackageExtra['assets-deployer']['target'];
-            //if (!file_exists($rootPackage-> $assetsDir))
+            $this->targetDir = $rootPackageExtra['assets-deployer']['target'];
+            if (!file_exists($this->targetDir)) {
+                mkdir($this->targetDir, 0777, true);
+            }
+            $this->io->write("Assets target dir = " . $this->targetDir);
         }
-
-        $this->io->write("Root package target dir = " . $rootPackage->getTargetDir());
     }
 
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
@@ -30,20 +33,15 @@ class AssetsDeployer extends LibraryInstaller
         parent::install($repo, $package);
         $this->io->write("Install assets for package " . $package->getName());
 
-        $rootPackage = $this->composer->getPackage();
-        $rootPackageExtra = $rootPackage->getExtra();
-
-        if (isset($rootPackageExtra['assets-deployer'])) {
-            $assetsDir = $rootPackageExtra['assets-deployer']['target'];
-            //if (!file_exists($rootPackage-> $assetsDir))
-        }
-
-        $this->io->write("Root package target dir = " . $rootPackage->getTargetDir());
-
         $packageExtra = $package->getExtra();
 
         if (isset($packageExtra['assets-deployer'])) {
-
+            $sourceDir = $packageExtra['assets-deployer']['source'];
+            $target = $this->targetDir . '/' . $package->getName();
+            if (file_exists($target)) {
+                unlink($target);
+            }
+            symlink($target, $sourceDir);
         }
     }
 
