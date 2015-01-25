@@ -31,13 +31,18 @@ class AssetsDeployer extends LibraryInstaller
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
         parent::install($repo, $package);
-        $this->io->write("Install assets for package " . $package->getName());
 
         $packageExtra = $package->getExtra();
 
         if (isset($packageExtra['assets-deployer'])) {
+            $this->io->write("Install assets for package " . $package->getName());
+
             $sourceDir = $packageExtra['assets-deployer']['source'];
+            $this->io->write("Source dir is " . $sourceDir);
+
             $target = $this->targetDir . '/' . $package->getName();
+            $this->io->write("Target is " . $target);
+
             if (file_exists($target)) {
                 unlink($target);
             }
