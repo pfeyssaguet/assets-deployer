@@ -50,15 +50,12 @@ class AssetsDeployer extends LibraryInstaller
             $sourceDir = $this->getInstallPath($package) . '/' . $packageExtra['assets-deployer']['source'];
             $this->io->write("Source dir is " . $sourceDir);
 
-            $target = $this->targetDir . '/' . $package->getName();
+            $target = $this->targetDir . '/' . str_replace('/', '-', $package->getName());
             $this->io->write("Target is " . $target);
 
             if (file_exists($target)) {
                 unlink($target);
             }
-
-            mkdir($target, 0777, true);
-            unlink($target);
 
             symlink($target, $sourceDir);
         }
