@@ -57,8 +57,8 @@ class AssetsDeployer extends LibraryInstaller
                 unlink($target);
             }
 
-            mkdir($sourceDir, 0777, true);
-            unlink($sourceDir);
+            mkdir($target, 0777, true);
+            unlink($target);
 
             symlink($target, $sourceDir);
         }
