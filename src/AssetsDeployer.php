@@ -21,7 +21,7 @@ class AssetsDeployer extends LibraryInstaller
             //if (!file_exists($rootPackage-> $assetsDir))
         }
 
-        fwrite(STDERR, "Root package target dir = " . $rootPackage->getTargetDir());
+        $this->io->write("Root package target dir = " . $rootPackage->getTargetDir());
 
         $packageExtra = $package->getExtra();
 
