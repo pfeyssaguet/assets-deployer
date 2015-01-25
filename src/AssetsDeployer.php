@@ -57,7 +57,7 @@ class AssetsDeployer extends LibraryInstaller
                 unlink($target);
             }
 
-            symlink($target, $sourceDir);
+            symlink($sourceDir, $target);
         }
     }
 }
