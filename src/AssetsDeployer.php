@@ -31,13 +31,23 @@ class AssetsDeployer extends LibraryInstaller
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
     {
         parent::install($repo, $package);
+        $this->deployAssets($package);
+    }
 
+    public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
+    {
+        parent::update($repo, $initial, $target);
+        $this->deployAssets($target);
+    }
+
+    private function deployAssets(PackageInterface $package)
+    {
         $packageExtra = $package->getExtra();
 
         if (isset($packageExtra['assets-deployer'])) {
-            $this->io->write("Install assets for package " . $package->getName());
+            $this->io->write("Install or update assets for package " . $package->getName());
 
-            $sourceDir = $packageExtra['assets-deployer']['source'];
+            $sourceDir = $package->getTargetDir() . '/' . $packageExtra['assets-deployer']['source'];
             $this->io->write("Source dir is " . $sourceDir);
 
             $target = $this->targetDir . '/' . $package->getName();
@@ -48,11 +58,5 @@ class AssetsDeployer extends LibraryInstaller
             }
             symlink($target, $sourceDir);
         }
-    }
-
-    public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
-    {
-        parent::update($repo, $initial, $target);
-        $this->io->write("Updating assets for package " . $target->getName());
     }
 }
