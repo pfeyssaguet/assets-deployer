@@ -20,8 +20,6 @@ class AssetsDeployerPlugin implements PluginInterface, EventSubscriberInterface
         $this->composer = $composer;
         $this->io = $io;
 
-        $this->io->write("AssetsDeployerPlugin activated");
-
         $installer = new AssetsDeployer($io, $composer);
         $composer->getInstallationManager()->addInstaller($installer);
     }
