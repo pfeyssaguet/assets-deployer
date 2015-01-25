@@ -47,7 +47,7 @@ class AssetsDeployer extends LibraryInstaller
         if (isset($packageExtra['assets-deployer'])) {
             $this->io->write("Install or update assets for package " . $package->getName());
 
-            $sourceDir = $package->getTargetDir() . '/' . $packageExtra['assets-deployer']['source'];
+            $sourceDir = 'vendor/' . $package->getName() . '/' . $packageExtra['assets-deployer']['source'];
             $this->io->write("Source dir is " . $sourceDir);
 
             $target = $this->targetDir . '/' . $package->getName();
