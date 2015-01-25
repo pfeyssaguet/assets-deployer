@@ -20,7 +20,7 @@ class AssetsDeployer extends LibraryInstaller
         $rootPackageExtra = $rootPackage->getExtra();
 
         if (isset($rootPackageExtra['assets-deployer'])) {
-            $this->targetDir = $rootPackageExtra['assets-deployer']['target'];
+            $this->targetDir = $this->getInstallPath($rootPackage) . '/' . $rootPackageExtra['assets-deployer']['target'];
             if (!file_exists($this->targetDir)) {
                 mkdir($this->targetDir, 0777, true);
             }
@@ -57,6 +57,8 @@ class AssetsDeployer extends LibraryInstaller
                 unlink($target);
             }
 
+            mkdir($sourceDir, 0777, true);
+            unlink($sourceDir);
 
             symlink($target, $sourceDir);
         }
