@@ -51,7 +51,7 @@ class AssetsDeployer extends LibraryInstaller
         $packageExtra = $package->getExtra();
 
         if (isset($packageExtra['assets-deployer']) && isset($packageExtra['assets-deployer']['source'])) {
-            $this->io->write("  - Deploying assets for <info>" . $package->getPrettyName() . "</info> <comment>" . $package->getPrettyVersion() . "</comment>");
+            $this->io->write("  - Deploying assets for <info>" . $package->getPrettyName() . "</info> (<comment>" . $package->getPrettyVersion() . "</comment>)");
 
             $sourceDir = $this->getInstallPath($package) . DIRECTORY_SEPARATOR . $packageExtra['assets-deployer']['source'];
             if ($this->io->isVerbose()) {
