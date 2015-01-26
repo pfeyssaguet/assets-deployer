@@ -10,7 +10,12 @@ use Composer\Repository\InstalledRepositoryInterface;
 
 class AssetsDeployer extends LibraryInstaller
 {
+    const STRATEGY_COPY = 'copy';
+    const STRATEGY_SYMLINK = 'symlink';
+
     protected $targetDir;
+
+    protected $strategy;
 
     public function __construct(IOInterface $io, Composer $composer)
     {
@@ -20,12 +25,25 @@ class AssetsDeployer extends LibraryInstaller
         $rootPackageExtra = $rootPackage->getExtra();
 
         if (isset($rootPackageExtra['assets-deployer']) && isset($rootPackageExtra['assets-deployer']['target'])) {
-            $this->targetDir = $rootPackageExtra['assets-deployer']['target'];
+            $options = $rootPackageExtra['assets-deployer'];
+
+            $this->targetDir = $options['target'];
             if (!file_exists($this->targetDir)) {
                 mkdir($this->targetDir, 0777, true);
             }
             if ($this->io->isVerbose()) {
                 $this->io->write("Assets target dir = " . $this->targetDir);
+            }
+
+            if (isset($options['strategy'])) {
+                if ($options['strategy'] == self::STRATEGY_COPY) {
+                    $this->strategy = self::STRATEGY_COPY;
+                } else {
+                    $this->strategy = self::STRATEGY_SYMLINK;
+                    if ($options['strategy'] != self::STRATEGY_SYMLINK) {
+                        throw new \InvalidArgumentException("Assets deployer unknown strategy " . $options['strategy']);
+                    }
+                }
             }
         }
     }
@@ -67,7 +85,19 @@ class AssetsDeployer extends LibraryInstaller
                 unlink($target);
             }
 
-            symlink($sourceDir, $target);
+            if ($this->strategy == self::STRATEGY_SYMLINK) {
+                symlink($sourceDir, $target);
+            } elseif ($this->strategy == self::STRATEGY_COPY) {
+                $directoryIterator = new \RecursiveDirectoryIterator($sourceDir, \RecursiveDirectoryIterator::SKIP_DOTS);
+                $iterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST);
+                foreach ($iterator as $item) {
+                    if ($item->isDir()) {
+                        mkdir($target . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+                    } else {
+                        copy($item, $target . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+                    }
+                }
+            }
         }
     }
 }
