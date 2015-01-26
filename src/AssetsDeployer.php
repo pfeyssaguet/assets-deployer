@@ -19,12 +19,14 @@ class AssetsDeployer extends LibraryInstaller
         $rootPackage = $this->composer->getPackage();
         $rootPackageExtra = $rootPackage->getExtra();
 
-        if (isset($rootPackageExtra['assets-deployer'])) {
+        if (isset($rootPackageExtra['assets-deployer']) && isset($rootPackageExtra['assets-deployer']['target'])) {
             $this->targetDir = $rootPackageExtra['assets-deployer']['target'];
             if (!file_exists($this->targetDir)) {
                 mkdir($this->targetDir, 0777, true);
             }
-            $this->io->write("Assets target dir = " . $this->targetDir);
+            if ($this->io->isVerbose()) {
+                $this->io->write("Assets target dir = " . $this->targetDir);
+            }
         }
     }
 
@@ -42,16 +44,24 @@ class AssetsDeployer extends LibraryInstaller
 
     private function deployAssets(PackageInterface $package)
     {
+        if ($this->targetDir === null) {
+            return;
+        }
+
         $packageExtra = $package->getExtra();
 
-        if (isset($packageExtra['assets-deployer'])) {
-            $this->io->write("Install or update assets for package " . $package->getName());
+        if (isset($packageExtra['assets-deployer']) && isset($packageExtra['assets-deployer']['source'])) {
+            $this->io->write("    Deploying assets for " . $package->getPrettyName() . " " . $package->getPrettyVersion());
 
-            $sourceDir = $this->getInstallPath($package) . '/' . $packageExtra['assets-deployer']['source'];
-            $this->io->write("Source dir is " . $sourceDir);
+            $sourceDir = $this->getInstallPath($package) . DIRECTORY_SEPARATOR . $packageExtra['assets-deployer']['source'];
+            if ($this->io->isVerbose()) {
+                $this->io->write("    Source dir is " . $sourceDir);
+            }
 
-            $target = $this->targetDir . '/' . str_replace('/', '-', $package->getName());
-            $this->io->write("Target is " . $target);
+            $target = $this->targetDir . DIRECTORY_SEPARATOR . str_replace(DIRECTORY_SEPARATOR, '-', $package->getName());
+            if ($this->io->isVerbose()) {
+                $this->io->write("    Target is " . $target);
+            }
 
             if (file_exists($target)) {
                 unlink($target);
